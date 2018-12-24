@@ -1,62 +1,51 @@
+import javax.imageio.IIOException;
 import javax.imageio.ImageIO;
+
+import Steganography.ImageReader;
+import Steganography.Pixel;
 import lombok.SneakyThrows;
+import Steganography.Decoder;
+import Steganography.Encoder;
+
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Scanner;
 
 public class Main {
 
     @SneakyThrows
     public static void main(String[] args) {
+        String filePath;
+        String message;
+        ImageReader imageReader = new ImageReader();
+        ArrayList<Pixel> imageArray;
+        BufferedImage img;
 
-        System.out.println("Enter path to image: ");
-        Scanner scanner = new Scanner(System.in);
-        String filePath = scanner.nextLine();
-        System.out.println("Enter message to encodete: ");
-        String message = scanner.nextLine();
+        if (args.length < 1 || args.length > 2) {
+            System.out.println("Error, incorrect number of arguments");
+        } else if (args.length == 1) {
+            filePath = args[0];
 
-        BufferedImage img = ImageIO.read(new File(filePath));
-
-        ArrayList<ArrayList<Pixel>> image = new ArrayList<ArrayList<Pixel>>();
-
-        for (int i = 0; i < img.getHeight(); i++) {
-
-            ArrayList<Pixel> imageRow = new ArrayList<Pixel>();
-
-            for (int j = 0; j < img.getWidth(); j++) {
-                int p = img.getRGB(j, i);
-                String r = String.format("%8s", Integer.toBinaryString((p >> 16) & 0xff)).replace(' ', '0');
-                String g = String.format("%8s", Integer.toBinaryString((p >> 8) & 0xff)).replace(' ', '0');
-                String b = String.format("%8s", Integer.toBinaryString(p & 0xff)).replace(' ', '0');
-
-                imageRow.add(new Pixel(r, g, b));
+            try {
+                img = ImageIO.read(new File(filePath));
+                imageArray = imageReader.readImage(img);
+                Decoder decoder = new Decoder();
+                decoder.decode(imageArray);
+            } catch (IIOException e) {
+                System.out.println("Incorrect Image path");
             }
-            image.add(imageRow);
-        }
+        } else {
+            filePath = args[0];
+            message = args[1];
 
-        Encode(image, message);
-
-    }
-
-    private static void Encode(ArrayList image, String message) {
-        System.out.println(message);
-
-        int size = message.length();
-
-        String[] msg = new String[message.length()];
-        for (int i = 0; i < message.length(); i++) {
-            msg[i] = String.format("%8s", Integer.toBinaryString(message.charAt(i))).replace(' ', '0');
-            System.out.println(msg[i]);
-        }
-
-        for (int i = 0; i < size; i++) {
-
+            try {
+                img = ImageIO.read(new File(filePath));
+                imageArray = imageReader.readImage(img);
+                Encoder encoder = new Encoder();
+                encoder.encode(imageArray, message, img);
+            } catch (IIOException e) {
+                System.out.println("Incorrect Image path");
+            }
         }
     }
-
-    private static void Decode(ArrayList image) {
-
-    }
-
 }
