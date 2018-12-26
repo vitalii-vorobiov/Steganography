@@ -20,7 +20,7 @@ public class ImageReader {
         }
 
         Color mycolor = new Color(img.getRGB(0, 0));
-        System.out.println("SUKASUKA: " + mycolor.getRed());
+        System.out.println("TestTest: " + mycolor.getRed());
 
         return imageArray;
     }

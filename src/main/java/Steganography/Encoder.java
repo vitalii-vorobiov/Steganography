@@ -36,7 +36,7 @@ public class Encoder {
 
         Color mycolor = new Color(img.getRGB(0, 0));
 
-        System.out.println("SUKA:" + mycolor.getRed());
-        ImageIO.write(img, "jpg", new File("suka.jpg"));
+        System.out.println("Test color:" + mycolor.getRed());
+        ImageIO.write(img, "jpg", new File("final.jpg"));
     }
 }
